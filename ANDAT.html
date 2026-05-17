@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teknik Analisis Data – Belajar Bareng</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f1a;
+    --surface: #151826;
+    --card: #1c2035;
+    --border: #252a42;
+    --accent1: #7c6af7;
+    --accent2: #4ecdc4;
+    --accent3: #f9a03f;
+    --accent4: #f26b6b;
+    --text: #e8eaf6;
+    --muted: #7f84a8;
+    --green: #56e39f;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── HEADER ── */
+  .hero {
+    position: relative;
+    padding: 60px 24px 48px;
+    text-align: center;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(124,106,247,.22) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent2);
+    border: 1px solid rgba(78,205,196,.3);
+    border-radius: 100px;
+    padding: 5px 16px;
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(32px, 6vw, 60px);
+    font-weight: 800;
+    line-height: 1.05;
+    margin-bottom: 16px;
+  }
+  .hero h1 span { color: var(--accent1); }
+  .hero p {
+    font-size: 16px;
+    color: var(--muted);
+    max-width: 520px;
+    margin: 0 auto 36px;
+  }
+
+  /* ── TABS ── */
+  .tabs-wrapper {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 0 16px 48px;
+  }
+  .tab-btn {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 9px 20px;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .tab-btn:hover { border-color: var(--accent1); color: var(--text); }
+  .tab-btn.active {
+    background: var(--accent1);
+    border-color: var(--accent1);
+    color: #fff;
+  }
+
+  /* ── SECTIONS ── */
+  .section { display: none; padding: 0 16px 80px; max-width: 900px; margin: 0 auto; }
+  .section.visible { display: block; animation: fadeUp .35s ease; }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(16px) } to { opacity:1; transform:translateY(0) } }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: 16px 16px 0 0;
+  }
+  .card.c1::before { background: var(--accent1); }
+  .card.c2::before { background: var(--accent2); }
+  .card.c3::before { background: var(--accent3); }
+  .card.c4::before { background: var(--accent4); }
+  .card.c5::before { background: var(--green); }
+
+  .card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+  .card-icon {
+    width: 42px; height: 42px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .card-icon.c1 { background: rgba(124,106,247,.15); }
+  .card-icon.c2 { background: rgba(78,205,196,.15); }
+  .card-icon.c3 { background: rgba(249,160,63,.15); }
+  .card-icon.c4 { background: rgba(242,107,107,.15); }
+  .card-icon.c5 { background: rgba(86,227,159,.15); }
+
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    line-height: 1.3;
+  }
+  .card-sub { font-size: 12px; color: var(--muted); margin-top: 3px; }
+
+  .card-body { font-size: 14px; color: #b0b5d0; }
+  .card-body p { margin-bottom: 10px; }
+  .card-body p:last-child { margin-bottom: 0; }
+
+  /* ── FORMULA BOX ── */
+  .formula-box {
+    background: rgba(0,0,0,.35);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: 14px 0;
+    font-family: 'Courier New', monospace;
+    font-size: 15px;
+    color: var(--accent2);
+    text-align: center;
+    letter-spacing: .5px;
+    overflow-x: auto;
+    white-space: pre;
+  }
+
+  /* ── BADGES / PILLS ── */
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 100px;
+    margin: 3px 3px 3px 0;
+  }
+  .badge-purple { background: rgba(124,106,247,.2); color: var(--accent1); }
+  .badge-teal   { background: rgba(78,205,196,.2);  color: var(--accent2); }
+  .badge-orange { background: rgba(249,160,63,.2);  color: var(--accent3); }
+  .badge-red    { background: rgba(242,107,107,.2); color: var(--accent4); }
+  .badge-green  { background: rgba(86,227,159,.2);  color: var(--green); }
+
+  /* ── TIP BOX ── */
+  .tip {
+    display: flex;
+    gap: 12px;
+    background: rgba(249,160,63,.07);
+    border: 1px solid rgba(249,160,63,.2);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-top: 14px;
+    font-size: 13px;
+    color: #c9a86c;
+  }
+  .tip-icon { font-size: 18px; flex-shrink: 0; }
+
+  /* ── TABLE ── */
+  .tbl { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 14px; }
+  .tbl th {
+    background: rgba(124,106,247,.12);
+    color: var(--accent1);
+    font-weight: 600;
+    padding: 10px 14px;
+    text-align: left;
+  }
+  .tbl td { padding: 9px 14px; border-bottom: 1px solid var(--border); color: #b0b5d0; }
+  .tbl tr:last-child td { border-bottom: none; }
+  .tbl tr:hover td { background: rgba(255,255,255,.02); }
+
+  /* ── DECISION TREE ── */
+  .tree { padding: 4px 0 0; }
+  .tree-node {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px dashed var(--border);
+  }
+  .tree-node:last-child { border-bottom: none; }
+  .tree-q {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    flex: 1;
+  }
+  .tree-ans {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+    font-weight: 400;
+  }
+  .tree-num {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    color: var(--accent1);
+    width: 28px;
+    flex-shrink: 0;
+    padding-top: 2px;
+  }
+
+  /* ── QUIZ ── */
+  .quiz-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 20px;
+  }
+  .quiz-q {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 18px;
+    line-height: 1.5;
+  }
+  .quiz-opts { display: flex; flex-direction: column; gap: 10px; }
+  .quiz-opt {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+    text-align: left;
+    transition: all .2s;
+  }
+  .quiz-opt:hover { border-color: var(--accent1); }
+  .quiz-opt.correct { border-color: var(--green); background: rgba(86,227,159,.1); color: var(--green); }
+  .quiz-opt.wrong   { border-color: var(--accent4); background: rgba(242,107,107,.1); color: var(--accent4); }
+  .quiz-opt.reveal  { opacity: .45; cursor: not-allowed; }
+  .quiz-fb {
+    margin-top: 14px;
+    font-size: 13px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    display: none;
+  }
+  .quiz-fb.show { display: block; }
+  .quiz-fb.ok  { background: rgba(86,227,159,.1); border: 1px solid rgba(86,227,159,.25); color: var(--green); }
+  .quiz-fb.bad { background: rgba(242,107,107,.1); border: 1px solid rgba(242,107,107,.25); color: var(--accent4); }
+
+  .score-bar {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .score-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 36px;
+    font-weight: 800;
+    color: var(--accent1);
+  }
+  .score-label { font-size: 13px; color: var(--muted); }
+
+  /* ── CHEATSHEET ── */
+  .cheat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+  }
+  .cheat-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+  }
+  .cheat-name {
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 6px;
+  }
+  .cheat-when { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+  .cheat-syarat { font-size: 12px; color: #b0b5d0; }
+
+  /* ── RESPONSIVE ── */
+  @media(max-width:600px) {
+    .card-header { flex-direction: column; gap: 10px; }
+    .score-bar { flex-direction: column; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">📊 Materi Kuliah</div>
+  <h1>Teknik <span>Analisis Data</span><br>Simpel & Gampang!</h1>
+  <p>Rangkuman lengkap uji statistik parametrik & non-parametrik buat belajar bareng — no ribet, langsung ngerti.</p>
+</div>
+
+<div class="tabs-wrapper">
+  <button class="tab-btn active" onclick="showTab('intro')">🏠 Intro</button>
+  <button class="tab-btn" onclick="showTab('parametrik')">📈 Parametrik</button>
+  <button class="tab-btn" onclick="showTab('nonparametrik')">📉 Non-Parametrik</button>
+  <button class="tab-btn" onclick="showTab('pilih')">🧭 Pilih Uji</button>
+  <button class="tab-btn" onclick="showTab('cheat')">📋 Cheat Sheet</button>
+  <button class="tab-btn" onclick="showTab('quiz')">🎯 Kuis</button>
+</div>
+
+<!-- ═══════════════════ INTRO ═══════════════════ -->
+<div class="section visible" id="intro">
+  <div class="section-title">🏁 Mulai dari Sini</div>
+
+  <div class="card c1">
+    <div class="card-header">
+      <div class="card-icon c1">🤔</div>
+      <div>
+        <div class="card-title">Kapan pakai Parametrik vs Non-Parametrik?</div>
+        <div class="card-sub">Pertanyaan wajib sebelum mulai analisis</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <table class="tbl">
+        <tr>
+          <th>Syarat</th>
+          <th>Parametrik ✅</th>
+          <th>Non-Parametrik ✅</th>
+        </tr>
+        <tr><td>Distribusi data</td><td>Normal</td><td>Bebas (tidak harus normal)</td></tr>
+        <tr><td>Skala data</td><td>Interval / Rasio</td><td>Ordinal / Nominal</td></tr>
+        <tr><td>Kekuatan</td><td>Lebih sensitif</td><td>Lebih fleksibel</td></tr>
+      </table>
+      <div class="tip">
+        <span class="tip-icon">💡</span>
+        <span>Cek normalitas dulu pakai <strong>Shapiro-Wilk</strong> (sampel kecil &lt;50) atau <strong>Kolmogorov-Smirnov</strong> (sampel besar). Kalau sig. &gt; 0,05 → data normal → pakai parametrik!</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card c2">
+    <div class="card-header">
+      <div class="card-icon c2">🗺️</div>
+      <div>
+        <div class="card-title">Peta Uji Statistik</div>
+        <div class="card-sub">Lihat semua uji dalam sekali pandang</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <table class="tbl">
+        <tr><th>Tujuan</th><th>Parametrik</th><th>Non-Parametrik</th></tr>
+        <tr><td>Bandingkan 2 kelompok berbeda</td><td>Uji t Independen</td><td>Mann-Whitney U</td></tr>
+        <tr><td>Bandingkan sebelum &amp; sesudah</td><td>Uji t Berpasangan</td><td>Wilcoxon</td></tr>
+        <tr><td>Bandingkan 1 kelompok vs standar</td><td>One Sample t-Test</td><td>—</td></tr>
+        <tr><td>Bandingkan &gt;2 kelompok</td><td>ANOVA</td><td>Kruskal-Wallis</td></tr>
+        <tr><td>Hubungan 2 variabel</td><td>Pearson</td><td>Spearman</td></tr>
+        <tr><td>Hubungan 2 variabel kategorik</td><td>—</td><td>Chi-Square</td></tr>
+        <tr><td>Pengaruh 1 variabel bebas</td><td>Regresi Sederhana</td><td>—</td></tr>
+        <tr><td>Pengaruh &gt;1 variabel bebas</td><td>Regresi Berganda</td><td>—</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="card c3">
+    <div class="card-header">
+      <div class="card-icon c3">📖</div>
+      <div>
+        <div class="card-title">Cara Baca Hasil — Aturan Emas</div>
+        <div class="card-sub">Berlaku untuk hampir semua uji!</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <p>Hampir semua uji pakai patokan yang sama:</p>
+      <table class="tbl">
+        <tr><th>Kondisi</th><th>Artinya</th></tr>
+        <tr><td><strong>sig. &lt; 0,05</strong></td><td>✅ Ada perbedaan / hubungan yang <strong>SIGNIFIKAN</strong></td></tr>
+        <tr><td><strong>sig. &gt; 0,05</strong></td><td>❌ Tidak ada perbedaan / hubungan yang signifikan</td></tr>
+        <tr><td><strong>t hitung &gt; t tabel</strong></td><td>✅ Tolak H₀ (ada perbedaan)</td></tr>
+        <tr><td><strong>t hitung &lt; t tabel</strong></td><td>❌ Terima H₀ (tidak ada perbedaan)</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ PARAMETRIK ═══════════════════ -->
+<div class="section" id="parametrik">
+  <div class="section-title">📈 Uji Parametrik</div>
+
+  <!-- Uji t Independen -->
+  <div class="card c1">
+    <div class="card-header">
+      <div class="card-icon c1">⚖️</div>
+      <div>
+        <div class="card-title">1. Uji t Independen</div>
+        <div class="card-sub">Bandingkan 2 kelompok yang BERBEDA (tidak saling berhubungan)</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <p><span class="badge badge-purple">Kata kunci: "dua kelompok berbeda"</span></p>
+      <p>Gunakan ini saat kamu punya dua grup yang terpisah — misalnya siswa kelas A vs kelas B, pria vs wanita, grup kontrol vs eksperimen.</p>
+      <div class="formula-box">       X̄₁ - X̄₂
+t = ─────────────────────
+    √(s₁²/n₁ + s₂²/n₂)</div>
+      <table class="tbl">
+        <tr><th>Simbol</th><th>Artinya</th></tr>
+        <tr><td>X̄₁, X̄₂</td><td>Rata-rata kelompok 1 dan 2</td></tr>
+        <tr><td>s₁², s₂²</td><td>Varians kelompok 1 dan 2</td></tr>
+        <tr><td>n₁, n₂</td><td>Jumlah sampel kelompok 1 dan 2</td></tr>
+      </table>
+      <div class="tip"><span class="tip-icon">💡</span><span><strong>Contoh nyata:</strong> Apakah ada perbedaan nilai ujian antara siswa yang belajar pakai media digital vs yang tidak?</span></div>
+    </div>
+  </div>
+
+  <!-- Paired t-Test -->
+  <div class="card c2">
+    <div class="card-header">
+      <div class="card-icon c2">🔄</div>
+      <div>
+        <div class="card-title">2. Uji t Berpasangan</div>
+        <div class="card-sub">Bandingkan kelompok SAMA diukur dua kali (pre-test & post-test)</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <p><span class="badge badge-teal">Kata kunci: "sebelum & sesudah"</span></p>
+      <p>Gunakan ini saat satu kelompok diukur dua kali — sebelum dan sesudah perlakuan. Kamu perlu hitung selisih (D) tiap pasangan data dulu.</p>
+      <div class="formula-box">      D̄
+t = ────────
+   sD / √n</div>
+      <table class="tbl">
+        <tr><th>Simbol</th><th>Artinya</th></tr>
+        <tr><td>D̄</td><td>Rata-rata selisih (post – pre)</td></tr>
+        <tr><td>sD</td><td>Standar deviasi selisih</td></tr>
+        <tr><td>n</td><td>Jumlah pasangan</td></tr>
+      </table>
+      <div class="tip"><span class="tip-icon">💡</span><span><strong>Contoh nyata:</strong> Apakah ada perbedaan kemampuan membaca siswa sebelum dan sesudah ikut program literasi?</span></div>
+    </div>
+  </div>
+
+  <!-- One Sample -->
+  <div class="card c3">
+    <div class="card-header">
+      <div class="card-icon c3">🎯</div>
+      <div>
+        <div class="card-title">3. One Sample t-Test</div>
+        <div class="card-sub">Bandingkan rata-rata 1 kelompok dengan nilai standar tertentu</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <p><span class="badge badge-orange">Kata kunci: "vs nilai KKM / standar"</span></p>
+      <p>Beda dari yang lain — ini hanya satu kelompok, dibandingkan dengan angka tertentu yang sudah ditetapkan (KKM, target, benchmark).</p>
+      <div class="formula-box">    X̄ - μ₀
+t = ─────────
+    s / √n</div>
+      <table class="tbl">
+        <tr><th>Simbol</th><th>Artinya</th></tr>
+        <tr><td>X̄</td><td>Rata-rata sampel</td></tr>
+        <tr><td>μ₀</td><td>Nilai standar/KKM yang dibandingkan</td></tr>
+        <tr><td>s</td><td>Standar deviasi sampel</td></tr>
+        <tr><td>n</td><td>Jumlah sampel</td></tr>
+      </table>
+      <div class="tip"><span class="tip-icon">💡</span><span><strong>Contoh nyata:</strong> Apakah rata-rata nilai siswa berbeda dari KKM yang ditetapkan = 75?</span></div>
+    </div>
+  </div>
+
+  <!-- ANOVA -->
+  <div class="card c4">
+    <div class="card-header">
+      <div class="card-icon c4">🏆</div>
+      <div>
+        <div class="card-title">4. ANOVA Satu Jalur</div>
+        <div class="card-sub">Bandingkan lebih dari 2 kelompok sekaligus</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <p><span class="badge badge-red">Kata kunci: "&gt;2 kelompok berbeda"</span></p>
+      <p>Kalau kelompoknya 3 atau lebih, jangan pakai uji t berkali-kali — pakai ANOVA! Prinsipnya: bandingkan variasi ANTAR kelompok vs variasi DI DALAM kelompok.</p>
+      <div class="formula-box">         SSbetween / (k-1)
+F = ──────────────────────────
+         SSwithin / (N-k)</div>
+      <table class="tbl">
+        <tr><th>Simbol</th><th>Artinya</th></tr>
+        <tr><td>SS</td><td>Sum of Squares (jumlah kuadrat)</td></tr>
+        <tr><td>k</td><td>Jumlah kelompok</td></tr>
+        <tr><td>N</td><td>Total sampel semua kelompok</td></tr>
+      </table>
+      <div class="tip"><span class="tip-icon">⚠️</span><span>Kalau hasil sig. &lt; 0,05, lanjutkan dengan <strong>Uji Post Hoc (Tukey/Scheffe)</strong> untuk cari tahu kelompok MANA yang berbeda!</span></div>
+      <div class="tip"><span class="tip-icon">💡</span><span><strong>Contoh nyata:</strong> Apakah ada perbedaan hasil belajar antara siswa yang diajar pakai metode ceramah, diskusi, dan berbasis proyek?</span></div>
+    </div>
+  </div>
+
+  <!-- Pearson -->
+  <div class="card c5">
+    <div class="card-header">
+      <div class="card-icon c5">🔗</div>
+      <div>
+        <div class="card-title">5. Korelasi Pearson</div>
+        <div class="card-sub">Ukur kekuatan & arah hubungan dua variabel numerik</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <p><span class="badge badge-green">Kata kunci: "hubungan antara X dan Y"</span></p>
+      <p>Hasil berupa nilai <strong>r</strong> antara -1 sampai +1. Positif = searah, negatif = berlawanan. Ingat: <em>korelasi ≠ sebab-akibat!</em></p>
+      <div class="formula-box">           n∑XY - (∑X)(∑Y)
+r = ─────────────────────────────────────</div>
+      <div class="formula-box">    √[n∑X² - (∑X)²] × [n∑Y² - (∑Y)²]</div>
+      <table class="tbl">
+        <tr><th>Nilai r</th><th>Kekuatan Hubungan</th></tr>
+        <tr><td>0,00 – 0,19</td><td>Sangat lemah 😴</td></tr>
+        <tr><td>0,20 – 0,39</td><td>Lemah 😐</td></tr>
+        <tr><td>0,40 – 0,59</td><td>Sedang 🙂</td></tr>
+        <tr><td>0,60 – 0,79</td><td>Kuat 💪</td></tr>
+        <tr><td>0,80 – 1,00</td><td>Sangat kuat 🔥</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Regresi -->
+  <div class="card c1">
+    <div class="card-header">
+      <div class="card-icon c1">📐</div>
+      <div>
+        <div class="card-title">6 & 7. Regresi Linear</div>
+        <div class="card-sub">Prediksi dan ukur pengaruh variabel bebas terhadap variabel terikat</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <p><span class="badge badge-purple">Sederhana: 1 variabel bebas</span> <span class="badge badge-teal">Berganda: &gt;1 variabel bebas</span></p>
+      <p>Kalau Korelasi cuma bilang "ada hubungan", Regresi bilang "seberapa besar pengaruhnya dan bisa prediksi nilai Y".</p>
+      <div class="formula-box">Sederhana: Y = a + bX
+Berganda:  Y = a + b₁X₁ + b₂X₂ + ... + bₙXₙ</div>
+      <table class="tbl">
+        <tr><th>Simbol</th><th>Artinya</th></tr>
+        <tr><td>a</td><td>Konstanta (nilai Y saat semua X = 0)</td></tr>
+        <tr><td>b</td><td>Koefisien: Y naik/turun berapa jika X naik 1?</td></tr>
+        <tr><td>R²</td><td>Koefisien determinasi (% variasi Y yang dijelaskan X)</td></tr>
+      </table>
+      <div class="tip"><span class="tip-icon">💡</span><span>Uji F → pengaruh simultan (semua X bersama). Uji t → pengaruh parsial (X₁ saja, X₂ saja, dst).</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ NON-PARAMETRIK ═══════════════════ -->
+<div class="section" id="nonparametrik">
+  <div class="section-title">📉 Uji Non-Parametrik</div>
+  <p style="color:var(--muted);font-size:14px;margin-bottom:24px;">Dipakai kalau data <strong>tidak normal</strong> atau skalanya <strong>ordinal/nominal</strong>. Ini versi "tangguhnya" yang tidak rewel soal distribusi data.</p>
+
+  <div class="card c4">
+    <div class="card-header">
+      <div class="card-icon c4">🔢</div>
+      <div>
+        <div class="card-title">1. Chi-Square (χ²)</div>
+        <div class="card-sub">Hubungan antara dua variabel KATEGORIK (nominal)</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <p><span class="badge badge-red">Kata kunci: "hubungan antar kategori"</span></p>
+      <p>Satu-satunya yang cocok untuk data nominal. Bandingkan frekuensi yang terjadi (fo) vs yang diharapkan (fe).</p>
+      <div class="formula-box">        (fo - fe)²
+χ² = ∑ ─────────────
+              fe</div>
+      <div class="tip"><span class="tip-icon">💡</span><span><strong>Contoh:</strong> Apakah ada hubungan antara jenis kelamin (L/P) dengan pilihan jurusan (IPA/IPS/Bahasa)?</span></div>
+    </div>
+  </div>
+
+  <div class="card c1">
+    <div class="card-header">
+      <div class="card-icon c1">🥊</div>
+      <div>
+        <div class="card-title">2. Mann-Whitney U</div>
+        <div class="card-sub">Alternatif Uji t Independen — 2 kelompok berbeda, data ordinal</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <p><span class="badge badge-purple">= Uji t Independen tapi tidak normal</span></p>
+      <p>Cara kerja: gabung semua data, beri peringkat (rank), cek apakah distribusi peringkat antar kelompok berbeda.</p>
+      <div class="formula-box">U₁ = n₁n₂ + n₁(n₁+1)/2 - ∑R₁
+U₂ = n₁n₂ + n₂(n₂+1)/2 - ∑R₂</div>
+      <p style="margin-top:8px;font-size:13px;">Ambil nilai U yang <strong>lebih kecil</strong> untuk dibandingkan dengan U tabel.</p>
+      <div class="tip"><span class="tip-icon">💡</span><span><strong>Contoh:</strong> Apakah ada perbedaan kepuasan (skala 1-5) antara pengguna layanan A dan B?</span></div>
+    </div>
+  </div>
+
+  <div class="card c2">
+    <div class="card-header">
+      <div class="card-icon c2">↕️</div>
+      <div>
+        <div class="card-title">3. Uji Wilcoxon</div>
+        <div class="card-sub">Alternatif Uji t Berpasangan — data ordinal, sebelum & sesudah</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <p><span class="badge badge-teal">= Uji t Berpasangan tapi tidak normal</span></p>
+      <p>Langkah: (1) hitung selisih tiap pasangan, (2) abaikan yang selisihnya nol, (3) beri rank, (4) tandai +/−, (5) hitung T.</p>
+      <div class="formula-box">     T - μT        n(n+1)
+Z = ─────────  μT = ────────
+      σT               4</div>
+      <p style="font-size:13px;margin-top:8px;">Sampel besar (n&gt;25): pakai Z. Sampel kecil: bandingkan T hitung ≤ T tabel.</p>
+    </div>
+  </div>
+
+  <div class="card c3">
+    <div class="card-header">
+      <div class="card-icon c3">🏅</div>
+      <div>
+        <div class="card-title">4. Kruskal-Wallis</div>
+        <div class="card-sub">Alternatif ANOVA — lebih dari 2 kelompok, data ordinal</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <p><span class="badge badge-orange">= ANOVA tapi tidak normal</span></p>
+      <p>Bekerja berdasarkan peringkat data gabungan semua kelompok — bukan nilai aslinya.</p>
+      <div class="formula-box">        12         Rⱼ²
+H = ────────── × ∑ ───── - 3(N+1)
+      N(N+1)        nⱼ</div>
+      <div class="tip"><span class="tip-icon">⚠️</span><span>Kalau signifikan → lanjut uji Post Hoc <strong>Mann-Whitney berpasangan</strong>.</span></div>
+    </div>
+  </div>
+
+  <div class="card c5">
+    <div class="card-header">
+      <div class="card-icon c5">🔗</div>
+      <div>
+        <div class="card-title">5. Korelasi Spearman</div>
+        <div class="card-sub">Alternatif Pearson — data ordinal atau tidak normal</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <p><span class="badge badge-green">= Korelasi Pearson tapi tidak normal / ordinal</span></p>
+      <p>Ubah nilai jadi peringkat dulu, lalu hitung selisih peringkat setiap pasangan. Interpretasi nilai rₛ sama persis dengan Pearson.</p>
+      <div class="formula-box">         6∑dᵢ²
+rₛ = 1 - ─────────────
+          n(n²-1)</div>
+      <p style="font-size:13px;margin-top:8px;">dᵢ = selisih rank X dan rank Y tiap pasangan data.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ PILIH UJI ═══════════════════ -->
+<div class="section" id="pilih">
+  <div class="section-title">🧭 Panduan Pilih Uji yang Tepat</div>
+  <p style="color:var(--muted);font-size:14px;margin-bottom:24px;">Ikuti langkah-langkah ini biar nggak salah pilih uji statistik.</p>
+
+  <div class="card c1">
+    <div class="card-header">
+      <div class="card-icon c1">🪜</div>
+      <div><div class="card-title">Alur Pemilihan Uji — Ikuti Urutannya!</div></div>
+    </div>
+    <div class="card-body">
+      <div class="tree">
+        <div class="tree-node">
+          <div class="tree-num">1</div>
+          <div class="tree-q">Apa tujuan analisismu?
+            <div class="tree-ans">→ Bandingkan kelompok? Cari hubungan? Prediksi pengaruh?</div>
+          </div>
+        </div>
+        <div class="tree-node">
+          <div class="tree-num">2</div>
+          <div class="tree-q">Berapa kelompok yang dibandingkan?
+            <div class="tree-ans">→ 1 kelompok vs standar? 2 kelompok? Lebih dari 2?</div>
+          </div>
+        </div>
+        <div class="tree-node">
+          <div class="tree-num">3</div>
+          <div class="tree-q">Kelompoknya berhubungan atau tidak?
+            <div class="tree-ans">→ Sama (sebelum-sesudah) → Berpasangan | Berbeda → Independen</div>
+          </div>
+        </div>
+        <div class="tree-node">
+          <div class="tree-num">4</div>
+          <div class="tree-q">Skala data apa yang dipakai?
+            <div class="tree-ans">→ Nominal? Ordinal? Interval/Rasio?</div>
+          </div>
+        </div>
+        <div class="tree-node">
+          <div class="tree-num">5</div>
+          <div class="tree-q">Apakah data berdistribusi normal?
+            <div class="tree-ans">→ Uji Shapiro-Wilk atau Kolmogorov-Smirnov terlebih dahulu!</div>
+          </div>
+        </div>
+        <div class="tree-node">
+          <div class="tree-num">✓</div>
+          <div class="tree-q">Tentukan ujiFmu berdasarkan semua jawaban di atas
+            <div class="tree-ans">→ Lihat tabel rangkuman atau cheat sheet!</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card c2">
+    <div class="card-header">
+      <div class="card-icon c2">📊</div>
+      <div><div class="card-title">Tabel Keputusan Lengkap</div></div>
+    </div>
+    <div class="card-body">
+      <table class="tbl">
+        <tr><th>Tujuan</th><th>Skala</th><th>Normal?</th><th>Pakai Uji</th></tr>
+        <tr><td>Bandingkan 2 kelompok berbeda</td><td>Interval/Rasio</td><td>Ya</td><td><span class="badge badge-purple">t Independen</span></td></tr>
+        <tr><td>Bandingkan 2 kelompok berbeda</td><td>Ordinal</td><td>Tidak</td><td><span class="badge badge-red">Mann-Whitney</span></td></tr>
+        <tr><td>Sebelum & sesudah (1 kelompok)</td><td>Interval/Rasio</td><td>Ya</td><td><span class="badge badge-purple">t Berpasangan</span></td></tr>
+        <tr><td>Sebelum & sesudah (1 kelompok)</td><td>Ordinal</td><td>Tidak</td><td><span class="badge badge-red">Wilcoxon</span></td></tr>
+        <tr><td>1 kelompok vs nilai standar</td><td>Interval/Rasio</td><td>Ya</td><td><span class="badge badge-purple">One Sample t</span></td></tr>
+        <tr><td>Bandingkan &gt;2 kelompok</td><td>Interval/Rasio</td><td>Ya</td><td><span class="badge badge-orange">ANOVA</span></td></tr>
+        <tr><td>Bandingkan &gt;2 kelompok</td><td>Ordinal</td><td>Tidak</td><td><span class="badge badge-red">Kruskal-Wallis</span></td></tr>
+        <tr><td>Hubungan 2 variabel</td><td>Interval/Rasio</td><td>Ya</td><td><span class="badge badge-teal">Pearson</span></td></tr>
+        <tr><td>Hubungan 2 variabel</td><td>Ordinal</td><td>Tidak</td><td><span class="badge badge-green">Spearman</span></td></tr>
+        <tr><td>Hubungan 2 variabel kategorik</td><td>Nominal</td><td>—</td><td><span class="badge badge-red">Chi-Square</span></td></tr>
+        <tr><td>Pengaruh 1 variabel bebas</td><td>Interval/Rasio</td><td>Ya</td><td><span class="badge badge-orange">Regresi Sederhana</span></td></tr>
+        <tr><td>Pengaruh &gt;1 variabel bebas</td><td>Interval/Rasio</td><td>Ya</td><td><span class="badge badge-orange">Regresi Berganda</span></td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ CHEAT SHEET ═══════════════════ -->
+<div class="section" id="cheat">
+  <div class="section-title">📋 Cheat Sheet</div>
+  <p style="color:var(--muted);font-size:14px;margin-bottom:24px;">Ringkasan super singkat untuk review cepat sebelum ujian!</p>
+  <div class="cheat-grid">
+    <div class="cheat-item">
+      <div class="cheat-name" style="color:var(--accent1)">⚖️ t Independen</div>
+      <div class="cheat-when">Kapan: 2 kelompok berbeda</div>
+      <div class="cheat-syarat">Syarat: Normal, Interval/Rasio<br>Rumus: (X̄₁−X̄₂) / √(s₁²/n₁+s₂²/n₂)</div>
+    </div>
+    <div class="cheat-item">
+      <div class="cheat-name" style="color:var(--accent2)">🔄 t Berpasangan</div>
+      <div class="cheat-when">Kapan: Sama, sebelum & sesudah</div>
+      <div class="cheat-syarat">Syarat: Normal, Interval/Rasio<br>Rumus: D̄ / (sD/√n)</div>
+    </div>
+    <div class="cheat-item">
+      <div class="cheat-name" style="color:var(--accent3)">🎯 One Sample t</div>
+      <div class="cheat-when">Kapan: 1 kelompok vs standar</div>
+      <div class="cheat-syarat">Syarat: Normal, Interval/Rasio<br>Rumus: (X̄−μ₀) / (s/√n)</div>
+    </div>
+    <div class="cheat-item">
+      <div class="cheat-name" style="color:var(--accent4)">🏆 ANOVA</div>
+      <div class="cheat-when">Kapan: >2 kelompok berbeda</div>
+      <div class="cheat-syarat">Syarat: Normal, Interval/Rasio<br>Lanjut: Post Hoc jika sig.</div>
+    </div>
+    <div class="cheat-item">
+      <div class="cheat-name" style="color:var(--green)">🔗 Pearson</div>
+      <div class="cheat-when">Kapan: Hubungan 2 variabel</div>
+      <div class="cheat-syarat">Syarat: Normal, Interval/Rasio<br>r: -1 s.d. +1</div>
+    </div>
+    <div class="cheat-item">
+      <div class="cheat-name" style="color:var(--accent3)">📐 Regresi Sederhana</div>
+      <div class="cheat-when">Kapan: Pengaruh 1 variabel bebas</div>
+      <div class="cheat-syarat">Syarat: Normal, Interval/Rasio<br>Y = a + bX; cek R²</div>
+    </div>
+    <div class="cheat-item">
+      <div class="cheat-name" style="color:var(--accent1)">📐 Regresi Berganda</div>
+      <div class="cheat-when">Kapan: Pengaruh >1 variabel bebas</div>
+      <div class="cheat-syarat">Syarat: Normal, Interval/Rasio<br>Y = a + b₁X₁+b₂X₂+...; Uji F & t</div>
+    </div>
+    <div class="cheat-item">
+      <div class="cheat-name" style="color:var(--accent4)">🔢 Chi-Square</div>
+      <div class="cheat-when">Kapan: Hubungan 2 variabel nominal</div>
+      <div class="cheat-syarat">Skala: Nominal (kategorik)<br>χ² = Σ(fo−fe)²/fe</div>
+    </div>
+    <div class="cheat-item">
+      <div class="cheat-name" style="color:var(--accent1)">🥊 Mann-Whitney</div>
+      <div class="cheat-when">Kapan: 2 kelompok berbeda, tidak normal</div>
+      <div class="cheat-syarat">Pengganti: t Independen<br>Berbasis: Peringkat (rank)</div>
+    </div>
+    <div class="cheat-item">
+      <div class="cheat-name" style="color:var(--accent2)">↕️ Wilcoxon</div>
+      <div class="cheat-when">Kapan: Sebelum-sesudah, tidak normal</div>
+      <div class="cheat-syarat">Pengganti: t Berpasangan<br>Berbasis: Rank bertanda</div>
+    </div>
+    <div class="cheat-item">
+      <div class="cheat-name" style="color:var(--accent3)">🏅 Kruskal-Wallis</div>
+      <div class="cheat-when">Kapan: >2 kelompok, tidak normal</div>
+      <div class="cheat-syarat">Pengganti: ANOVA<br>Lanjut: Mann-Whitney berpasangan</div>
+    </div>
+    <div class="cheat-item">
+      <div class="cheat-name" style="color:var(--green)">🔗 Spearman</div>
+      <div class="cheat-when">Kapan: Hubungan 2 variabel ordinal</div>
+      <div class="cheat-syarat">Pengganti: Pearson<br>rₛ = 1 − (6Σd²/n(n²−1))</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ QUIZ ═══════════════════ -->
+<div class="section" id="quiz">
+  <div class="section-title">🎯 Kuis — Seberapa Paham Kamu?</div>
+
+  <div class="score-bar">
+    <div class="score-num" id="scoreNum">0</div>
+    <div>
+      <div style="font-weight:600">Skor kamu</div>
+      <div class="score-label" id="scoreLabel">Belum ada yang dijawab</div>
+    </div>
+  </div>
+
+  <!-- Q1 -->
+  <div class="quiz-card" id="q1">
+    <div class="quiz-q">1. Peneliti ingin membandingkan nilai ujian antara siswa kelas A dan kelas B. Data berdistribusi normal dan berskala rasio. Uji apa yang paling tepat?</div>
+    <div class="quiz-opts">
+      <button class="quiz-opt" onclick="answer(this,'q1',false,'Wilcoxon dipakai untuk data berpasangan yang tidak normal.')">Uji Wilcoxon</button>
+      <button class="quiz-opt" onclick="answer(this,'q1',true,'Betul! Dua kelompok berbeda (A vs B), data normal dan rasio → Uji t Independen.')">Uji t Independen ✅</button>
+      <button class="quiz-opt" onclick="answer(this,'q1',false,'ANOVA dipakai jika kelompoknya lebih dari 2.')">Uji ANOVA</button>
+      <button class="quiz-opt" onclick="answer(this,'q1',false,'Chi-Square dipakai untuk variabel kategorik/nominal.')">Chi-Square</button>
+    </div>
+    <div class="quiz-fb" id="q1-fb"></div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="quiz-card" id="q2">
+    <div class="quiz-q">2. Sebuah program konseling diuji efektivitasnya. Skor kecemasan 20 siswa diukur sebelum dan sesudah konseling. Data tidak berdistribusi normal. Uji apa yang tepat?</div>
+    <div class="quiz-opts">
+      <button class="quiz-opt" onclick="answer(this,'q2',false,'t Berpasangan cocok, tapi untuk data yang normal.')">Uji t Berpasangan</button>
+      <button class="quiz-opt" onclick="answer(this,'q2',false,'Mann-Whitney untuk dua kelompok yang berbeda, bukan berpasangan.')">Mann-Whitney</button>
+      <button class="quiz-opt" onclick="answer(this,'q2',true,'Tepat! Satu kelompok, sebelum-sesudah, tidak normal → Wilcoxon.')">Wilcoxon ✅</button>
+      <button class="quiz-opt" onclick="answer(this,'q2',false,'Kruskal-Wallis untuk lebih dari 2 kelompok independen.')">Kruskal-Wallis</button>
+    </div>
+    <div class="quiz-fb" id="q2-fb"></div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="quiz-card" id="q3">
+    <div class="quiz-q">3. Peneliti ingin tahu apakah ada hubungan antara jenis kelamin (Laki-laki/Perempuan) dan pilihan ekstrakurikuler (Olahraga/Seni/Sains). Uji apa yang sesuai?</div>
+    <div class="quiz-opts">
+      <button class="quiz-opt" onclick="answer(this,'q3',false,'Pearson untuk variabel numerik, bukan kategorik.')">Korelasi Pearson</button>
+      <button class="quiz-opt" onclick="answer(this,'q3',true,'Betul! Dua variabel nominal/kategorik → Chi-Square.')">Chi-Square ✅</button>
+      <button class="quiz-opt" onclick="answer(this,'q3',false,'Spearman untuk variabel ordinal, bukan nominal.')">Korelasi Spearman</button>
+      <button class="quiz-opt" onclick="answer(this,'q3',false,'ANOVA untuk membandingkan rata-rata, bukan hubungan kategorik.')">ANOVA</button>
+    </div>
+    <div class="quiz-fb" id="q3-fb"></div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="quiz-card" id="q4">
+    <div class="quiz-q">4. Sekolah ingin tahu apakah nilai rata-rata siswa (75,3) berbeda secara signifikan dari KKM yang ditetapkan yaitu 75. Uji apa yang dipakai?</div>
+    <div class="quiz-opts">
+      <button class="quiz-opt" onclick="answer(this,'q4',false,'t Independen untuk membandingkan dua kelompok berbeda.')">Uji t Independen</button>
+      <button class="quiz-opt" onclick="answer(this,'q4',false,'t Berpasangan untuk data sebelum-sesudah.')">Uji t Berpasangan</button>
+      <button class="quiz-opt" onclick="answer(this,'q4',true,'Tepat! Satu kelompok dibandingkan nilai standar (KKM 75) → One Sample t-Test.')">One Sample t-Test ✅</button>
+      <button class="quiz-opt" onclick="answer(this,'q4',false,'Regresi untuk memprediksi pengaruh, bukan membandingkan dengan standar.')">Regresi Linear</button>
+    </div>
+    <div class="quiz-fb" id="q4-fb"></div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="quiz-card" id="q5">
+    <div class="quiz-q">5. Hasil uji statistik menunjukkan sig. = 0,032. Apa kesimpulannya?</div>
+    <div class="quiz-opts">
+      <button class="quiz-opt" onclick="answer(this,'q5',false,'Sig. 0,032 < 0,05, artinya ada perbedaan/hubungan yang signifikan.')">Tidak ada perbedaan/hubungan signifikan</button>
+      <button class="quiz-opt" onclick="answer(this,'q5',true,'Betul! 0,032 < 0,05 → tolak H₀ → terdapat perbedaan/hubungan yang signifikan.')">Terdapat perbedaan/hubungan yang SIGNIFIKAN ✅</button>
+      <button class="quiz-opt" onclick="answer(this,'q5',false,'Tidak bisa disimpulkan demikian. Sig. di bawah 0,05 sudah cukup untuk kesimpulan.')">Data tidak cukup untuk disimpulkan</button>
+      <button class="quiz-opt" onclick="answer(this,'q5',false,'0,032 < 0,05, bukan sebaliknya.')">Sig. > 0,05, H₀ diterima</button>
+    </div>
+    <div class="quiz-fb" id="q5-fb"></div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="quiz-card" id="q6">
+    <div class="quiz-q">6. Peneliti menemukan korelasi Pearson r = 0,72 antara jam belajar dan nilai ujian. Bagaimana interpretasi yang tepat?</div>
+    <div class="quiz-opts">
+      <button class="quiz-opt" onclick="answer(this,'q6',false,'0,72 masuk rentang 0,60–0,79 yang berarti KUAT, bukan sedang.')">Hubungan sedang dan searah</button>
+      <button class="quiz-opt" onclick="answer(this,'q6',false,'r positif berarti searah, bukan berlawanan.')">Hubungan kuat dan berlawanan arah</button>
+      <button class="quiz-opt" onclick="answer(this,'q6',true,'Tepat! r = 0,72 masuk rentang 0,60–0,79 (kuat), dan positif artinya searah (jam belajar naik, nilai naik).')">Hubungan kuat dan searah ✅</button>
+      <button class="quiz-opt" onclick="answer(this,'q6',false,'0,72 masuk kategori kuat (0,60–0,79), bukan sangat kuat (0,80–1,00).')">Hubungan sangat kuat dan searah</button>
+    </div>
+    <div class="quiz-fb" id="q6-fb"></div>
+  </div>
+
+</div>
+
+<script>
+  let answered = {};
+  let score = 0;
+  const total = 6;
+
+  function showTab(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('visible'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('visible');
+    event.currentTarget.classList.add('active');
+  }
+
+  function answer(btn, qId, correct, explanation) {
+    if (answered[qId]) return;
+    answered[qId] = true;
+
+    const opts = btn.closest('.quiz-opts').querySelectorAll('.quiz-opt');
+    opts.forEach(o => { o.classList.add('reveal'); o.disabled = true; });
+
+    if (correct) {
+      btn.classList.remove('reveal');
+      btn.classList.add('correct');
+      score++;
+    } else {
+      btn.classList.remove('reveal');
+      btn.classList.add('wrong');
+    }
+
+    const fb = document.getElementById(qId + '-fb');
+    fb.textContent = (correct ? '✅ Benar! ' : '❌ Kurang tepat. ') + explanation;
+    fb.className = 'quiz-fb show ' + (correct ? 'ok' : 'bad');
+
+    updateScore();
+  }
+
+  function updateScore() {
+    const n = Object.keys(answered).length;
+    document.getElementById('scoreNum').textContent = score;
+    document.getElementById('scoreLabel').textContent =
+      n === 0 ? 'Belum ada yang dijawab'
+      : n < total ? `${n} dari ${total} soal dijawab`
+      : score === total ? '🔥 Sempurna! Kamu kuasai materi ini!'
+      : score >= 4 ? '👍 Bagus! Tinggal sedikit lagi!'
+      : '📚 Ayo ulangi lagi materinya!';
+  }
+</script>
+</body>
+</html>
